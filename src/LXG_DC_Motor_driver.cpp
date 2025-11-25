@@ -2,14 +2,15 @@
 
 // Constructor
 LXG_Motor::LXG_Motor()
-    : speed(0), isAttached(false), isStarted(false), movingForward(true) {}
+    : _speed(0), _isAttached(false), _isStarted(false), _movingForward(false),
+      _isMoving(false) {}
 
 // Destructor
 LXG_Motor::~LXG_Motor() { stop(); }
 
 // Attach motor to pins
 void LXG_Motor::attach(int enablePin, int forwardPin, int backwardPin) {
-  if (isAttached) {
+  if (_isAttached) {
     Serial.println(F("Motor already attached"));
     return;
   }
@@ -27,12 +28,12 @@ void LXG_Motor::attach(int enablePin, int forwardPin, int backwardPin) {
   digitalWrite(FORWARD, LOW);
   digitalWrite(BACKWARD, LOW);
 
-  isAttached = true;
+  _isAttached = true;
 }
 
 // Toggle motor on/off
 void LXG_Motor::toggle() {
-  if (isStarted) {
+  if (_isStarted) {
     stop();
   } else {
     start();
@@ -41,128 +42,147 @@ void LXG_Motor::toggle() {
 
 // Start motor with default settings
 void LXG_Motor::start() {
-  if (!isAttached) {
+  if (!_isAttached) {
     Serial.println(F("Error: Motor not attached"));
     return;
   }
 
-  if (isStarted) {
+  if (_isStarted) {
     Serial.println(F("Motor already running"));
     return;
   }
 
-  speed = 255;
-  isStarted = true;
+  _speed = 255;
+  _isStarted = true;
+  _isMoving = false;
 
   digitalWrite(FORWARD, LOW);
   digitalWrite(BACKWARD, LOW);
-  analogWrite(ENABLE, speed);
+  analogWrite(ENABLE, _speed);
 }
 
 // Start motor with specific speed
 void LXG_Motor::start(int initialSpeed) {
-  if (!isAttached) {
+  if (!_isAttached) {
     Serial.println(F("Error: Motor not attached"));
     return;
   }
 
-  speed = constrain(initialSpeed, 0, 255);
-  isStarted = true;
+  if (_isStarted) {
+    Serial.println(F("Motor already running"));
+    return;
+  }
+
+  _speed = constrain(initialSpeed, 0, 255);
+  _isStarted = true;
+  _isMoving = false;
 
   digitalWrite(FORWARD, LOW);
   digitalWrite(BACKWARD, LOW);
-  analogWrite(ENABLE, speed);
+  analogWrite(ENABLE, _speed);
 }
 
 // Move motor forward
 void LXG_Motor::forward() {
-  if (!isAttached) {
+  if (!_isAttached) {
     Serial.println(F("Error: Motor not attached"));
     return;
   }
 
-  if (!isStarted) {
+  if (!_isStarted) {
     Serial.println(F("Error: Motor not started. Call start() first."));
     return;
   }
 
-  movingForward = true;
+  _movingForward = true;
+  _isMoving = true;
   digitalWrite(FORWARD, HIGH);
   digitalWrite(BACKWARD, LOW);
 }
 
 // Move motor backward
 void LXG_Motor::reverse() {
-  if (!isAttached) {
+  if (!_isAttached) {
     Serial.println(F("Error: Motor not attached"));
     return;
   }
 
-  if (!isStarted) {
+  if (!_isStarted) {
     Serial.println(F("Error: Motor not started. Call start() first."));
     return;
   }
 
-  movingForward = false;
+  _movingForward = false;
+  _isMoving = true;
   digitalWrite(FORWARD, LOW);
   digitalWrite(BACKWARD, HIGH);
 }
 
 // Stop motor
 void LXG_Motor::stop() {
-  if (!isStarted)
+  if (!_isStarted)
     return;
 
   analogWrite(ENABLE, 0);
   digitalWrite(FORWARD, LOW);
   digitalWrite(BACKWARD, LOW);
 
-  isStarted = false;
-  speed = 0; // Reset speed to 0 when stopped
+  _isStarted = false;
+  _isMoving = false;
+  _speed = 0;
 }
 
 // Set motor speed (0-255)
 void LXG_Motor::setSpeed(int newSpeed) {
-  if (!isAttached) {
+  if (!_isAttached) {
     Serial.println(F("Error: Motor not attached"));
     return;
   }
 
-  speed = constrain(newSpeed, 0, 255);
+  _speed = constrain(newSpeed, 0, 255);
 
-  if (isStarted) {
-    analogWrite(ENABLE, speed);
+  if (_isStarted) {
+    analogWrite(ENABLE, _speed);
   }
 }
 
 // Accelerate motor
 void LXG_Motor::accelerate(int increment) {
-  if (!isAttached || !isStarted)
+  if (!_isAttached || !_isStarted)
     return;
 
-  speed = constrain(speed + increment, 0, 255);
-  analogWrite(ENABLE, speed);
+  _speed = constrain(_speed + increment, 0, 255);
+  analogWrite(ENABLE, _speed);
 }
 
 // Decelerate motor
 void LXG_Motor::brake(int decrement) {
-  if (!isAttached || !isStarted)
+  if (!_isAttached || !_isStarted)
     return;
 
-  speed = constrain(speed - decrement, 0, 255);
-  analogWrite(ENABLE, speed);
+  _speed = constrain(_speed - decrement, 0, 255);
+  analogWrite(ENABLE, _speed);
 
   // Auto-stop if speed reaches 0
-  if (speed == 0) {
+  if (_speed == 0) {
     stop();
   }
 }
 
-// Getters
-int LXG_Motor::currentSpeed() const { return speed; }
+// get current speed
+int LXG_Motor::speed() const { return _speed; }
 
-bool LXG_Motor::isRunning() const { return isStarted; }
+// Check if motor is attached
+bool LXG_Motor::isReady() const { return _isAttached; }
 
-bool LXG_Motor::isReady() const { return isAttached; }
+// Check if motor is started
+bool LXG_Motor::isRunning() const { return _isStarted; }
 
-bool LXG_Motor::isForward() const { return movingForward; }
+// Check if motor is moving in any direction
+bool LXG_Motor::isMoving() const { return _isMoving; }
+
+// Check if motor is moving forward
+bool LXG_Motor::isMovingForward() const { return _isMoving && _movingForward; }
+
+// Check if motor is moving backwards
+bool LXG_Motor::isReversing() const { return _isMoving && !_movingForward; }

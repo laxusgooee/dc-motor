@@ -5,13 +5,14 @@
 
 class LXG_Motor {
 private:
-  int speed;
   int ENABLE;
   int FORWARD;
   int BACKWARD;
-  bool isAttached;
-  bool isStarted;
-  bool movingForward; // Track current direction
+  int _speed;
+  bool _isAttached;
+  bool _isStarted;
+  bool _isMoving;
+  bool _movingForward;
 
 public:
   // Constructor
@@ -50,14 +51,23 @@ public:
   // Decelerate motor
   void brake(int decrement = 25);
 
-  // Getters
-  int currentSpeed() const;
+  // get current speed
+  int speed() const;
 
-  bool isRunning() const;
-
+  // Check if motor is attached
   bool isReady() const;
 
-  bool isForward() const;
+  // Check if motor is started
+  bool isRunning() const;
+
+  // Check if motor is moving in any direction
+  bool isMoving() const;
+
+  // Check if motor is moving forward
+  bool isMovingForward() const;
+
+  // Check if motor is moving backwards
+  bool isReversing() const;
 };
 
 #endif
