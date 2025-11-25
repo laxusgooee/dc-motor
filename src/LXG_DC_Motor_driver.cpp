@@ -140,7 +140,7 @@ void LXG_Motor::setSpeed(int newSpeed) {
 Gear LXG_Motor::currentGear() const { return _gear; }
 
 // Get current speed
-int LXG_Motor::speed() const { return _speed; }
+int LXG_Motor::currentSpeed() const { return _speed; }
 
 // Check if motor is attached
 bool LXG_Motor::isReady() const { return _isAttached; }

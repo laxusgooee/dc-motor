@@ -23,7 +23,7 @@ decelerate	KEYWORD2
 brake	KEYWORD2
 setSpeed	KEYWORD2
 currentGear	KEYWORD2
-speed	KEYWORD2
+currentSpeed	KEYWORD2
 isReady	KEYWORD2
 isRunning	KEYWORD2
 isDriving	KEYWORD2

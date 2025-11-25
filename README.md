@@ -63,7 +63,7 @@ void loop() {
     myMotor.accelerate(50); // Accelerate
     delay(500);
     Serial.print("Speed: ");
-    Serial.println(myMotor.speed());
+    Serial.println(myMotor.currentSpeed());
   }
   
   Serial.println("Decelerating...");
@@ -71,7 +71,7 @@ void loop() {
     myMotor.decelerate(50); // Decelerate
     delay(500);
     Serial.print("Speed: ");
-    Serial.println(myMotor.speed());
+    Serial.println(myMotor.currentSpeed());
   }
 
   Serial.println("Braking...");
@@ -128,7 +128,7 @@ void loop() {
 - `Gear currentGear() const`
   Returns the current gear (`PARK`, `DRIVE`, or `REVERSE`).
 
-- `int speed() const`
+- `int currentSpeed() const`
   Returns the current speed (0-255).
 
 - `bool isReady() const`

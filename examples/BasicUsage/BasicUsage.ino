@@ -26,7 +26,7 @@ void loop() {
     myMotor.accelerate(50); // Accelerate
     delay(500);
     Serial.print("Speed: ");
-    Serial.println(myMotor.speed());
+    Serial.println(myMotor.currentSpeed());
   }
   
   Serial.println("Decelerating...");
@@ -34,7 +34,7 @@ void loop() {
     myMotor.decelerate(50); // Decelerate
     delay(500);
     Serial.print("Speed: ");
-    Serial.println(myMotor.speed());
+    Serial.println(myMotor.currentSpeed());
   }
 
   Serial.println("Braking...");

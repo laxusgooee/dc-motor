@@ -53,7 +53,7 @@ public:
   Gear currentGear() const;
 
   // Get current speed
-  int speed() const;
+  int currentSpeed() const;
 
   // Check if motor is attached
   bool isReady() const;
